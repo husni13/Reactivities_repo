@@ -1,7 +1,9 @@
 using Application.Activities;
 using Application.Core;
+using Application.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Infrastructure.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -24,6 +26,9 @@ namespace API.Extensions
             services.AddValidatorsFromAssemblyContaining<Create>();
 
             services.AddMediatR(typeof(List.Handler));
+
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUserAccessor, UserAccessor>();
 
             services.AddCors(options => {
                 options.AddPolicy("CorsPolicy", policy => {
