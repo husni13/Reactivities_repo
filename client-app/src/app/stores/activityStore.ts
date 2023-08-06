@@ -198,4 +198,8 @@ export default class AcivityStore {
             runInAction(() => this.loading = false)
         }
     }
+
+    clearSelectedActivity = () => {
+        this.selectedActivity = undefined;
+    }
 }
