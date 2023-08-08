@@ -12,11 +12,14 @@ export default observer( function ProfilePage() {
     const {userName} = useParams<{userName: string}>();
     const {profileStore} = useStore();
 
-    const {loadProfile, loadingProfile, profile} = profileStore;
+    const {loadProfile, loadingProfile, profile, setActiveTab} = profileStore;
   
-    useEffect(()=>{
+    useEffect(()=>{ 
         if(userName) loadProfile(userName);
-    }, [loadProfile, userName]);
+        return () => {
+            setActiveTab(0);
+        }
+    }, [loadProfile, userName, setActiveTab]);
 
     if(loadingProfile) return <LoadingComponent content='Loading Profile...' />
 

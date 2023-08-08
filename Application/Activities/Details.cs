@@ -1,4 +1,5 @@
 using Application.Core;
+using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain;
@@ -18,9 +19,11 @@ namespace Application.Activities
         public class Handler : IRequestHandler<Query, Result<ActivityDTO>>
         {
             private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
-            public Handler(AppDbContext context, IMapper mapper)
+            private readonly IMapper _mapper;
+            private readonly IUserAccessor _userAccessor;
+            public Handler(AppDbContext context, IMapper mapper, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _mapper = mapper;
                 _context = context;
             }
@@ -28,7 +31,8 @@ namespace Application.Activities
             public async Task<Result<ActivityDTO>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var activity = await _context.Activities
-                    .ProjectTo<ActivityDTO>(_mapper.ConfigurationProvider)
+                    .ProjectTo<ActivityDTO>(_mapper.ConfigurationProvider,
+                        new {currentUserName = _userAccessor.GetUsername()})
                     .FirstOrDefaultAsync(x => x.Id == request.Id);
             
                 return Result<ActivityDTO>.Success(activity);
